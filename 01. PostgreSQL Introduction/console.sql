@@ -1,0 +1,61 @@
+-- Table: public.employees
+-- DROP TABLE IF EXISTS public.employees;
+-- CREATE TABLE IF NOT EXISTS public.employees
+-- (
+--     id integer NOT NULL DEFAULT nextval('employees_id_seq'::regclass),
+--     first_name character varying(30) COLLATE pg_catalog."default" NOT NULL,
+--     last_name character varying(30) COLLATE pg_catalog."default" NOT NULL,
+--     CONSTRAINT employees_pkey PRIMARY KEY (id)
+-- )
+-- INSERT INTO EMPLOYEES(FIRST_NAME, LAST_NAME)
+-- VALUES ('Pesho', 'Goshov'),
+-- 	('Gosho', 'Peshov')
+-- INSERT INTO categories(name)
+-- VALUES ('water'), ('milk'), ('coffee')
+-- INSERT INTO products(name, category_id)
+-- VALUES ('devin', 1), ('domlyan', 2), ('lavazza', 3)
+-- INSERT INTO products(name, category_id)
+-- VALUES ('devin2', 1), ('domlyan2', 2), ('lavazza2', 3)
+-- SELECT * FROM employees
+-- SELECT id, first_name FROM employees
+-- SELECT * FROM employees
+-- LIMIT 1
+-- SELECT * FROM employees
+-- WHERE id = 1
+-- SELECT * FROM employees
+-- WHERE first_name LIKE 'P%'
+-- SELECT * FROM employees
+-- WHERE first_name LIKE '%o%'
+-- SELECT CONCAT_WS(' ', first_name, last_name) as full_name FROM employees
+-- ALTER TABLE employees
+-- ADD COLUMN salary DECIMAL
+-- ALTER TABLE employees
+-- DROP COLUMN salary
+
+-- SELECT *
+-- FROM PRODUCTS
+-- JOIN CATEGORIES ON products.category_id = categories.id
+-- RIGHT JOIN categories ON products.category_id = categories.id
+-- LEFT JOIN categories ON products.category_id = categories.id
+-- WHERE categories.name IN ('milk', 'coffee')
+-- ORDER BY products.name, categories.name DESC
+
+-- INSERT INTO employees(first_name, last_name)
+-- VALUES ('PyCharm', 'Postgres')
+
+-- SELECT * FROM products
+-- WHERE category_id = 3 OR category_id = 2
+
+-- INSERT INTO categories(name) VALUES ('wine')
+-- SELECT * FROM products
+-- RIGHT JOIN categories on categories.id = products.category_id
+
+-- ALTER TABLE products ADD COLUMN price DECIMAL DEFAULT 0
+-- ALTER TABLE employees
+--     RENAME COLUMN first_name to employee_name
+--
+-- ALTER TABLE employees
+--     DROP COLUMN first_name
+
+-- ALTER TABLE employees
+--     RENAME COLUMN employee_name to first_name
