@@ -1,6 +1,10 @@
+from datetime import date
 from enum import Enum
 
 from django.db import models
+from django.urls import reverse
+
+from models_django.web.validators import validate_before_today
 
 # Models fields == class attributes in Model Classes
 
@@ -18,15 +22,46 @@ SQL Server: money
 #     INTERN = 'Intern',
 #     REGULAR = 'REGULAR'
 
+class AuditInfoMixin(models.Model):
+    class Meta:
+        abstract = True  # No table will be created in the DB
+        # can be inherited in other models
 
-class Department(models.Model):
+    # This will be auto set on created
+    created_on = models.DateTimeField(
+        auto_now_add=True,  # optional
+    )
+
+    # This will be auto set on each save/update
+    updated_on = models.DateTimeField(
+        auto_now=True,  # optional
+    )
+
+
+# class DeletableMixin(models.Model):
+#     class Meta:
+#         abstract =  True
+#     is_deleted = models.BooleanField(default=False)
+
+class Department(AuditInfoMixin, models.Model):
     name = models.CharField(max_length=20)
+    slug = models.SlugField(
+        unique=True,
+        # null=True
+    )
 
     def __str__(self):
         return f'Id: {self.pk}; Name: {self.name}'
 
+    def get_absolute_url(self):
+        url = reverse('details department', kwargs={
+            'pk': self.pk,
+            'slug': self.slug,
+        })
+        return url
 
-class Project(models.Model):
+
+class Project(AuditInfoMixin, models.Model):
     name = models.CharField(max_length=30)
     code_name = models.CharField(
         max_length=10,
@@ -35,7 +70,10 @@ class Project(models.Model):
     deadline = models.DateField()
 
 
-class Employee(models.Model):
+class Employee(AuditInfoMixin, models.Model):
+    class Meta:
+        ordering = ('-years_of_experience', 'age')  # desc; like default order
+
     # LEVEL_INTERN = 'Intern'
     # LEVEL_JUNIOR = 'Junior'
     # LEVEL_REGULAR = 'Regular'
@@ -65,15 +103,14 @@ class Employee(models.Model):
 
     # TEXT - string with unlimited length
     level = models.TextField(
-        # max_length=len(LEVEL_REGULAR)
-        # choices=LEVELS
+        # max_length=len(LEVEL_REGULAR),
+        # choices=LEVELS,
         choices=(
             ('jr', 'Junior'),
             ('in', 'Intern'),
             ('reg', 'Regular'),
         ),
-        verbose_name='Seniority level'
-
+        verbose_name='Seniority level',
     )
 
     # One-to-many
@@ -81,7 +118,7 @@ class Employee(models.Model):
         # 2 migrations - 1 for the Department table and next for the employee table department func.
         Department,
         # on_delete=models.CASCADE,
-        on_delete=models.RESTRICT
+        on_delete=models.RESTRICT,
         # on_delete=models.SET_NULL, null=True,
     )
 
@@ -92,30 +129,36 @@ class Employee(models.Model):
         # through='EmployeesProjects',
     )  # 1 migration
 
-    start_date = models.DateField()
+    start_date = models.DateField(
+        validators=(validate_before_today,)
+    )
 
     email = models.EmailField(
         unique=True,
-        editable=False,
+        # editable=False,
     )  # charfield + validation
 
     is_full_time = models.BooleanField(
         null=True,
     )
 
-    # This will be auto set on created
-    created_on = models.DateTimeField(
-        auto_now_add=True,  # optional
-    )
-
-    # This will be auto set on each save/update
-    updated_on = models.DateTimeField(
-        auto_now=True,  # optional
-    )
+    # # This will be auto set on created
+    # created_on = models.DateTimeField(
+    #     auto_now_add=True,  # optional
+    # )
+    #
+    # # This will be auto set on each save/update
+    # updated_on = models.DateTimeField(
+    #     auto_now=True,  # optional
+    # )
 
     @property
     def fullname(self):
         return f'{self.first_name} {self.last_name}'
+
+    @property
+    def years_of_employment(self):
+        return date.today() - self.start_date
 
     def __str__(self):
         return f'Id: {self.pk}; Name: {self.fullname}'
@@ -156,11 +199,14 @@ class AccessCard(models.Model):
     employee = models.OneToOneField(
         Employee,
         on_delete=models.CASCADE,
-        primary_key=True # employee id will be used as primary key for the access card
+        primary_key=True  # employee id will be used as primary key for the access card
     )
 
 
 class Category(models.Model):
+    class Meta:
+        verbose_name_plural = 'Categories'
+
     name = models.CharField(
         max_length=15
     )
@@ -173,6 +219,7 @@ class Category(models.Model):
 
     def __str__(self):
         return f'Category: {self.name}'
+
 
 class NullBlankDemo(models.Model):
     # blank = models.IntegerField(
