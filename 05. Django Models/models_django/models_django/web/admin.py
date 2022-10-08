@@ -25,25 +25,25 @@ class EmployeeAdmin(admin.ModelAdmin):
     # sortable_by = ('id', 'first_name')
     # fields = [('first_name', 'last_name'), 'age']
 
-    fieldsets = (
-        ('Personal Info',
-         {
-             'fields': ('first_name', 'last_name', 'age'),
-         }
-         ),
-        (
-            'Professional Info',
-            {
-                'fields': ('level', 'years_of_experience'),
-            }
-        ),
-        (
-            'Company Info',
-            {
-                'fields': ('department', 'is_full_time', 'start_date'),
-            }
-        )
-    )
+    # fieldsets = (
+    #     ('Personal Info',
+    #      {
+    #          'fields': ('first_name', 'last_name', 'age'),
+    #      }
+    #      ),
+    #     (
+    #         'Professional Info',
+    #         {
+    #             'fields': ('level', 'years_of_experience'),
+    #         }
+    #     ),
+    #     (
+    #         'Company Info',
+    #         {
+    #             'fields': ('department', 'is_full_time', 'start_date'),
+    #         }
+    #     )
+    # )
 
     def department_name(self, obj):
         return obj.department.name
@@ -51,8 +51,10 @@ class EmployeeAdmin(admin.ModelAdmin):
     # def has_delete_permission(self, request, obj=None):
     #     return False
 
+
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
+    # prepopulated_fields = {'slug': ('name',)}
     pass
 
 
